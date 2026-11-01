@@ -1,1 +1,537 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GINROU - FORTNITE STYLE WEREWOLF</title>
+  <style>
+    /* ==========================================
+       1. 基本スタイル & フォートナイト風テーマ
+       ========================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      user-select: none;
+    }
 
+    body {
+      background-color: #0b0e14;
+      color: #ffffff;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* ==========================================
+       2. 認証画面（ワンタイムキー ＆ 名前入力）
+       ========================================== */
+    .auth-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #0b0e14;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+    }
+
+    .auth-box {
+      background: #131a26;
+      border: 3px solid #00d2ff;
+      padding: 40px;
+      width: 360px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+    }
+
+    .auth-title {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #00d2ff;
+      letter-spacing: 2px;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      background: #1e2838;
+      border: 2px solid #2a3548;
+      color: #fff;
+      font-size: 1.1rem;
+      text-align: center;
+      outline: none;
+    }
+
+    .auth-input:focus {
+      border-color: #00d2ff;
+    }
+
+    .auth-btn {
+      width: 100%;
+      background: #00d2ff;
+      color: #000;
+      border: none;
+      padding: 12px 0;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .auth-btn:hover {
+      background: #66e3ff;
+    }
+
+    /* ==========================================
+       3. ヘッダー固定バー
+       ========================================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 70px;
+      background: rgba(15, 20, 30, 0.95);
+      border-bottom: 3px solid #2a3548;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      z-index: 100;
+    }
+
+    .currency-container {
+      background: #161d2b;
+      border: 2px solid #ffe600;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.2rem;
+      color: #ffe600;
+      box-shadow: 0 0 10px rgba(255, 230, 0, 0.2);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 15px;
+    }
+
+    .tab-btn {
+      background: #1e2838;
+      color: #8a99ad;
+      border: 2px solid #2a3548;
+      padding: 10px 30px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    .tab-btn:hover {
+      background: #2a3c59;
+      color: #fff;
+    }
+
+    .tab-btn.active {
+      background: #00d2ff;
+      color: #000;
+      border-color: #00d2ff;
+      box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+    }
+
+    /* ==========================================
+       4. スライドビュー（ロビー ↔ ストア）
+       ========================================== */
+    .viewport {
+      width: 100vw;
+      height: 100vh;
+      padding-top: 70px;
+      overflow: hidden;
+    }
+
+    .main-slider {
+      display: flex;
+      width: 200vw;
+      height: calc(100vh - 70px);
+      transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .main-slider.show-store {
+      transform: translateX(-100vw);
+    }
+
+    .page-section {
+      width: 100vw;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* ==========================================
+       5. ロビー画面 ＆ プレイボタン
+       ========================================== */
+    .lobby-char-box {
+      background: radial-gradient(circle, rgba(0,210,255,0.15) 0%, rgba(0,0,0,0) 70%);
+      border: 3px solid #00d2ff;
+      padding: 30px 50px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      margin-bottom: 30px;
+    }
+
+    .lobby-char-box:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(0, 210, 255, 0.4);
+    }
+
+    .char-emoji-large {
+      font-size: 7rem;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .tap-hint {
+      color: #00d2ff;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+    }
+
+    .player-name-display {
+      font-size: 1.5rem;
+      color: #fff;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* フォトナ風 PLAY ボタン */
+    .play-btn {
+      background: #ffe600;
+      color: #000;
+      border: none;
+      padding: 15px 70px;
+      font-size: 2.2rem;
+      cursor: pointer;
+      transform: skew(-10deg);
+      box-shadow: 0 0 20px rgba(255, 230, 0, 0.4);
+      transition: all 0.2s;
+    }
+
+    .play-btn:hover {
+      background: #fff066;
+      transform: skew(-10deg) scale(1.05);
+    }
+
+    .play-btn.ready {
+      background: #ff2a2a;
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255, 42, 42, 0.5);
+    }
+
+    /* ==========================================
+       6. ストア画面
+       ========================================== */
+    .store-title {
+      font-size: 2.5rem;
+      margin-bottom: 30px;
+      color: #ffe600;
+      text-shadow: 0 0 10px rgba(255, 230, 0, 0.3);
+    }
+
+    .store-grid {
+      display: flex;
+      gap: 25px;
+    }
+
+    .store-card {
+      background: #131a26;
+      border: 3px solid #2a3548;
+      width: 200px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      transition: border-color 0.2s;
+    }
+
+    .store-card:hover {
+      border-color: #ffe600;
+    }
+
+    .buy-btn {
+      width: 100%;
+      background: #ffe600;
+      color: #000;
+      border: none;
+      padding: 10px 0;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .buy-btn:hover {
+      background: #fff066;
+    }
+
+    .buy-btn.owned {
+      background: #2a3548;
+      color: #8a99ad;
+      cursor: default;
+    }
+
+    /* ==========================================
+       7. キャラ選択モーダル
+       ========================================== */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+    }
+
+    .modal-content {
+      background: #131a26;
+      border: 3px solid #00d2ff;
+      padding: 30px;
+      width: 400px;
+      text-align: center;
+    }
+
+    .modal-title {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+
+    .owned-list {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+
+    .select-char-btn {
+      background: #1e2838;
+      border: 2px solid #2a3548;
+      font-size: 3rem;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    .select-char-btn:hover {
+      border-color: #00d2ff;
+    }
+
+    .close-btn {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 8px 25px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ① ワンタイムキー・名前入力画面 -->
+  <div class="auth-overlay" id="auth-screen">
+    <div class="auth-box">
+      <h2 class="auth-title">GINROU</h2>
+      <input type="text" class="auth-input" id="input-key" placeholder="部屋コード（4桁）">
+      <input type="text" class="auth-input" id="input-name" placeholder="ニックネーム">
+      <button class="auth-btn" onclick="submitAuth()">入室する</button>
+    </div>
+  </div>
+
+  <!-- ② ヘッダー -->
+  <header>
+    <div class="currency-container">
+      <span>🌕</span>
+      <span id="coin-count">500</span>
+      <span>MC</span>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="tab-btn active" id="btn-tab-lobby" onclick="switchTab('lobby')">ロビー</button>
+      <button class="tab-btn" id="btn-tab-store" onclick="switchTab('store')">ストア</button>
+    </div>
+  </header>
+
+  <!-- ③ メインコンテンツ（スライド構造） -->
+  <div class="viewport">
+    <div class="main-slider" id="main-slider">
+      
+      <!-- ロビー画面 -->
+      <section class="page-section" id="page-lobby">
+        <div class="player-name-display" id="display-player-name">---</div>
+
+        <div class="lobby-char-box" onclick="openOwnedModal()">
+          <div class="char-emoji-large" id="equipped-emoji">🐺</div>
+          <div class="tap-hint">クリックして変更</div>
+        </div>
+
+        <button class="play-btn" id="play-btn" onclick="toggleReady()">PLAY</button>
+      </section>
+
+      <!-- ストア画面 -->
+      <section class="page-section" id="page-store">
+        <h2 class="store-title">ITEM SHOP</h2>
+        <div class="store-grid">
+          
+          <div class="store-card">
+            <div style="font-size: 4rem;">🐺</div>
+            <button class="buy-btn owned">所持中</button>
+          </div>
+
+          <div class="store-card">
+            <div style="font-size: 4rem;">🦊</div>
+            <button class="buy-btn" id="buy-btn-🦊" onclick="buyChar('🦊', 100)">🌕 100 MC</button>
+          </div>
+
+          <div class="store-card">
+            <div style="font-size: 4rem;">🧛</div>
+            <button class="buy-btn" id="buy-btn-🧛" onclick="buyChar('🧛', 200)">🌕 200 MC</button>
+          </div>
+
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ④ 所持キャラ選択モーダル -->
+  <div class="modal-overlay" id="owned-modal" style="display: none;">
+    <div class="modal-content">
+      <h3 class="modal-title">キャラ選択</h3>
+      <div class="owned-list" id="owned-char-list"></div>
+      <button class="close-btn" onclick="closeOwnedModal()">閉じる</button>
+    </div>
+  </div>
+
+  <script>
+    // --------------------------------------------------
+    // データ状態の管理
+    // --------------------------------------------------
+    let coins = 500;
+    let ownedChars = ['🐺'];
+    let equippedChar = '🐺';
+    let isReady = false;
+    let playerName = '';
+
+    // --------------------------------------------------
+    // 認証（ワンタイムキー ＆ 名前設定）
+    // --------------------------------------------------
+    function submitAuth() {
+      const key = document.getElementById('input-key').value.trim();
+      const name = document.getElementById('input-name').value.trim();
+
+      if (!key || !name) {
+        alert('部屋コードとニックネームを入力してください。');
+        return;
+      }
+
+      playerName = name;
+      document.getElementById('display-player-name').textContent = playerName;
+      document.getElementById('auth-screen').style.display = 'none';
+    }
+
+    // --------------------------------------------------
+    // タブ切り替え（横スライド）
+    // --------------------------------------------------
+    function switchTab(tab) {
+      const slider = document.getElementById('main-slider');
+      const lobbyBtn = document.getElementById('btn-tab-lobby');
+      const storeBtn = document.getElementById('btn-tab-store');
+
+      if (tab === 'store') {
+        slider.classList.add('show-store');
+        storeBtn.classList.add('active');
+        lobbyBtn.classList.remove('active');
+      } else {
+        slider.classList.remove('show-store');
+        lobbyBtn.classList.add('active');
+        storeBtn.classList.remove('active');
+      }
+    }
+
+    // --------------------------------------------------
+    // PLAY / CANCEL ボタン切り替え
+    // --------------------------------------------------
+    function toggleReady() {
+      const btn = document.getElementById('play-btn');
+      isReady = !isReady;
+
+      if (isReady) {
+        btn.textContent = 'CANCEL';
+        btn.classList.add('ready');
+      } else {
+        btn.textContent = 'PLAY';
+        btn.classList.remove('ready');
+      }
+    }
+
+    // --------------------------------------------------
+    // キャラ購入処理
+    // --------------------------------------------------
+    function buyChar(emoji, price) {
+      if (ownedChars.includes(emoji)) return;
+
+      if (coins >= price) {
+        coins -= price;
+        ownedChars.push(emoji);
+
+        document.getElementById('coin-count').textContent = coins;
+        const btn = document.getElementById(`buy-btn-${emoji}`);
+        btn.textContent = '所持中';
+        btn.classList.add('owned');
+
+        alert(`${emoji} を購入しました！`);
+      } else {
+        alert('ムーンコインが足りません！');
+      }
+    }
+
+    // --------------------------------------------------
+    // 所持キャラ選択モーダル
+    // --------------------------------------------------
+    function openOwnedModal() {
+      const listContainer = document.getElementById('owned-char-list');
+      listContainer.innerHTML = '';
+
+      ownedChars.forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.className = 'select-char-btn';
+        btn.textContent = emoji;
+        btn.onclick = () => {
+          equippedChar = emoji;
+          document.getElementById('equipped-emoji').textContent = emoji;
+          closeOwnedModal();
+        };
+        listContainer.appendChild(btn);
+      });
+
+      document.getElementById('owned-modal').style.display = 'flex';
+    }
+
+    function closeOwnedModal() {
+      document.getElementById('owned-modal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
